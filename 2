@@ -107,7 +107,6 @@ local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local TextService = game:GetService("TextService")
 local LocalPlayer = game:GetService("Players").LocalPlayer
-local Mouse = LocalPlayer:GetMouse()
 local CoreGui = game:GetService("CoreGui")
 local viewport = workspace.CurrentCamera.ViewportSize
 
@@ -558,39 +557,25 @@ local function MakeDraggable(topbarobject, object)
     CustomPos(topbarobject, object)
 end
 
-function CircleClick(Button, X, Y)
+function CircleClick(Button)
+    -- Lightweight click feedback - instant, no heavy animation
     spawn(function()
-        Button.ClipsDescendants = true
         local Circle = Instance.new("ImageLabel")
         Circle.Image = "rbxassetid://266543268"
         Circle.ImageColor3 = Color3.fromRGB(80, 80, 80)
-        Circle.ImageTransparency = 0.8999999761581421
-        Circle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
         Circle.BackgroundTransparency = 1
         Circle.ZIndex = 10
         Circle.Name = "Circle"
+        Circle.Size = UDim2.new(0, 1, 0, 1)
+        Circle.Position = UDim2.new(0.5, 0, 0.5, 0)
+        Circle.AnchorPoint = Vector2.new(0.5, 0.5)
         Circle.Parent = Button
 
-        local NewX = X - Circle.AbsolutePosition.X
-        local NewY = Y - Circle.AbsolutePosition.Y
-        Circle.Position = UDim2.new(0, NewX, 0, NewY)
-        local Size = 0
-        if Button.AbsoluteSize.X > Button.AbsoluteSize.Y then
-            Size = Button.AbsoluteSize.X * 1.5
-        elseif Button.AbsoluteSize.X < Button.AbsoluteSize.Y then
-            Size = Button.AbsoluteSize.Y * 1.5
-        elseif Button.AbsoluteSize.X == Button.AbsoluteSize.Y then
-            Size = Button.AbsoluteSize.X * 1.5
-        end
-
-        local Time = 0.5
-        Circle:TweenSizeAndPosition(UDim2.new(0, Size, 0, Size), UDim2.new(0.5, -Size / 2, 0.5, -Size / 2), "Out", "Quad",
-            Time, false, nil)
-        for i = 1, 10 do
-            Circle.ImageTransparency = Circle.ImageTransparency + 0.01
-            wait(Time / 10)
-        end
-        Circle:Destroy()
+        -- Instant expand and fade
+        Circle:TweenSize(UDim2.new(0, 30, 0, 30), "Out", "Linear", 0.08, true)
+        task.delay(0.08, function()
+            Circle:Destroy()
+        end)
     end)
 end
 
@@ -1294,7 +1279,7 @@ function Chloex:Window(GuiConfig)
     LayersPageLayout.SortOrder = Enum.SortOrder.LayoutOrder
     LayersPageLayout.Name = "LayersPageLayout"
     LayersPageLayout.Parent = LayersFolder
-    LayersPageLayout.TweenTime = 0.5
+    LayersPageLayout.TweenTime = 0.1
     LayersPageLayout.EasingDirection = Enum.EasingDirection.InOut
     LayersPageLayout.EasingStyle = Enum.EasingStyle.Quad
 
@@ -1526,11 +1511,11 @@ function Chloex:Window(GuiConfig)
     end
 
     Min.Activated:Connect(function()
-        CircleClick(Min, Mouse.X, Mouse.Y)
+        CircleClick(Min)
         DropShadowHolder.Visible = false
     end)
     Close.Activated:Connect(function()
-        CircleClick(Close, Mouse.X, Mouse.Y)
+        CircleClick(Close)
 
         local Overlay = Instance.new("Frame")
         Overlay.Size = UDim2.new(1, 0, 1, 0)
@@ -1963,7 +1948,7 @@ function Chloex:Window(GuiConfig)
         end
 
         TabButton.Activated:Connect(function()
-            CircleClick(TabButton, Mouse.X, Mouse.Y)
+            CircleClick(TabButton)
             switchToTab(false)
         end)
 
@@ -2153,7 +2138,7 @@ function Chloex:Window(GuiConfig)
 
             if AlwaysOpen ~= true then
                 SectionButton.Activated:Connect(function()
-                    CircleClick(SectionButton, Mouse.X, Mouse.Y)
+                    CircleClick(SectionButton)
                     if OpenSection then
                         -- Close: simple animation
                         TweenService:Create(FeatureFrame, TweenInfo.new(0.15, Enum.EasingStyle.Linear), { Rotation = 0 }):Play()
