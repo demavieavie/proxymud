@@ -1948,7 +1948,6 @@ function Chloex:Window(GuiConfig)
         end
 
         TabButton.Activated:Connect(function()
-            CircleClick(TabButton)
             switchToTab(false)
         end)
 
@@ -2138,7 +2137,6 @@ function Chloex:Window(GuiConfig)
 
             if AlwaysOpen ~= true then
                 SectionButton.Activated:Connect(function()
-                    CircleClick(SectionButton)
                     if OpenSection then
                         -- Close: simple animation
                         TweenService:Create(FeatureFrame, TweenInfo.new(0.15, Enum.EasingStyle.Linear), { Rotation = 0 }):Play()
